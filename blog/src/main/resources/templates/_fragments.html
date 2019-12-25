@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:replace="${title}">博客</title>
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}"/>
+    <style>
+        /* footer元素设置 */
+        footer div .row {
+            margin-bottom: 0.625rem;
+            height: 6.25rem;
+        }
+        footer div .row [class*="col-md-3"] {
+            height: 100px;
+            margin-top: 1.875rem;
+            text-align: center;
+            border-right: 1px solid #122B40;
+        }
+    </style>
+</head>
+<body>
+    <!--导航栏部分-->
+    <nav th:fragment="nav" class="navbar navbar-inverse navbar-static-top" role="navagation">
+        <div class="container">
+            <!-- logo -->
+            <div class="navbar-header">
+                <a href="#" class="navbar-brand">SJZD</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li ><a href="#" th:href="@{/}"><i class="glyphicon glyphicon-home"></i>&nbsp;首页</a></li>
+                    <li ><a href="#" th:href="@{/types/-1}"><i class="glyphicon glyphicon-bell"></i>&nbsp;分类</a></li>
+                    <li ><a href="#" th:href="@{/tags/-1}"><i class="glyphicon glyphicon-tags"></i>&nbsp;标签</a></li>
+                    <li ><a href="#" th:href="@{/archives}"><i class="glyphicon glyphicon-book"></i>&nbsp;归档</a></li>
+                    <li ><a href="#" th:href="@{/about}"><i class="glyphicon glyphicon-user"></i>&nbsp;关于我</a></li>
+                </ul>
+                <form class="navbar-form navbar-right" role="search" target="_blank" method="post" th:action="@{/search}">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="query">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>搜索
+                            </button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <!--底部部分-->
+    <footer th:fragment="footer" class="footer navbar-default navbar-static-bottom" >
+        <div class="container-fluid" style="background-color: #3C763D;height: 200px;">
+            <div class="row" style="height: 60%">
+                <div class="col-md-3"><img src="../static/img/QR-code.jpg"  th:src="@{/img/QR-code.jpg}" class="img-rounded" height="80px" width="80px"></div>
+                <div class="col-md-3" id="footer-freshBlogs-container">
+                    <div th:fragment="footer-fresh-div" >
+                        <strong>最新博客</strong>
+                        <div th:each="blog : ${blogs}">
+                            <a href="#" style="color: #0C1021" th:href="@{/blog/{id}(id=${blog.id})}" th:text="${blog.title}">Dapibus ac facilisis in</a>
+                        </div>
+                        <!--/*-->
+                        <div>
+                            <a href="#">Morbi leo risus</a>
+                        </div>
+                        <div>
+                            <a href="#">Vestibulum at eros</a>
+                        </div>
+                        <!--*/-->
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <address>
+                        <strong>联系我</strong><br>
+                        <p>
+                            邮箱: <span th:text="#{footer.email}">121@136.com</span><br>
+                            QQ: <span th:text="#{footer.qq}">666666666</span><br>
+                            QQ群: <span th:text="#{footer.qqGroup}">666666666</span>
+                        </p>
+                    </address>
+                </div>
+                <div class="col-md-3">
+                    <strong>SJZD</strong><br>
+                    <p th:text="#{footer.introduce}">一个简易的博客</p>
+                </div>
+            </div>
+            <div class="text-center" style="border-top: black 1px solid; width: 100%;">
+                <div style="margin-top: 20px">
+                    <strong>Copyright &copy; 2019 - 2050 SJZD designed at CQUT</strong>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!--js部分-->
+    <th:block th:fragment="script">
+        <script type="text/javascript" src="../static/jquery/jquery-3.4.1.min.js" th:src="@{/jquery/jquery-3.4.1.min.js}"></script>
+        <script type="text/javascript" src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+        <script>
+            $(function() {
+                $("#footer-freshBlogs-container").load(/*[[@{/footer/fresh}]]*/"/footer/fresh");
+            })
+        </script>
+    </th:block>
+
+</body>
+</html>

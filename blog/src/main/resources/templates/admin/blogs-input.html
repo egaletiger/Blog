@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.springframework.org/schema/jdbc">
+<head th:replace="admin/_fragments :: head(~{::title})">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>博客列表</title>
+	<link rel="stylesheet" href="../../static/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="../../static/lib/editormd/css/editormd.min.css" th:href="@{/lib/editormd/css/editormd.min.css"/>
+	<style>
+		/* footer元素设置 */
+		footer div .row {
+			margin-bottom: 0.625rem;
+			height: 6.25rem;
+		}
+		footer div .row [class*="col-md-3"] {
+			height: 100px;
+			margin-top: 1.875rem;
+			text-align: center;
+			border-right: 1px solid #122B40;
+		}
+	</style>
+</head>
+<body>
+<!--导航栏-->
+<div  th:replace="admin/_fragments :: nav">
+	<nav class="navbar navbar-inverse navbar-static-top" role="navagation">
+		<div class="container">
+			<!-- logo -->
+			<div class="navbar-header">
+				<a href="#" class="navbar-brand">管理后台</a>
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li ><a href="#"><i class="glyphicon glyphicon-home"></i>&nbsp;博客</a></li>
+					<li ><a href="#"><i class="glyphicon glyphicon-th"></i>&nbsp;分类</a></li>
+					<li ><a href="#"><i class="glyphicon glyphicon-tags"></i>&nbsp;标签</a></li>
+				</ul>
+
+				<!-- 用户已登录      ↓ -->
+				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							<!-- 用户头像      ↓ -->
+							<img id="iconImg" style="height:30px;width:30px" src= "../../static/img/default.jpg" class="img-circle"/>
+							<!-- 用户头像      ↑ -->
+							<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a>头像修改</a></li>
+							<li><a href="/static/img/admin/logout">退出登录</a></li>
+						</ul>
+					</li>
+				</ul>
+				<!-- 用户登录状态       ↑ -->
+			</div>
+		</div>
+	</nav>
+</div>
+
+<!-- 中间内容-->
+<div style="margin-top: 2.125rem;">
+	<div class="container" style="width: 100%;">
+		<div>
+			<div class="row">
+				<div class="col-md-8">
+					<input type="text" name="title0" class="form-control" th:value="${blog.title}" placeholder="标题(字数不大于30)" required>
+				</div>
+				<div class="col-md-4 text-right">
+					<button onclick="window.history.go(-1)" class="btn btn-default" type="button">返回</i></button>
+					<button id="open-submit-modal-btn" class="btn btn-primary" type="button">发布文章</button>
+				</div>
+			</div>
+			<div id="editor" style="z-index: 10001 !important;">
+				<textarea name="content0" style="display:none;" th:text="${blog.content}" placeholder="博客内容"></textarea>
+			</div>
+		</div>
+
+		<div id="summit-modal"  style="z-index: 10002 !important;" class="modal fade" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">发布文章</h4>
+					</div>
+					<form id="blog-form"  method="post" th:object="${blog}" th:action="*{id} == 0 ? @{/admin/blogs/add} : @{/admin/blogs/edit/{id}(id=*{id})}">
+						<div class="modal-body">
+							<input type="hidden" name="id" th:value="*{id}">
+							<input type="hidden" name="published" th:value="*{published}">
+							<input type="hidden" name="title"/>
+							<input type="hidden" name="content">
+							<div class="form-group" style="width: 100%">
+								<select class="form-control" name="flag">
+									<option class="item" data-value="原创" selected="selected">原创</option>
+									<option class="item" data-value="转载">转载</option>
+									<option class="item" data-value="翻译">翻译</option>
+								</select>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="input-group">
+										<span class="input-group-addon">首图地址</span>
+										<input name="firstPicture" type="text" th:value="*{firstPicture}" class="form-control" required>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="input-group">
+										<span class="input-group-addon">分类</span>
+										<select id="type-select" th:attr="data-value=*{typeId}" class="form-control chosen-select" name="typeId" required>
+											<div th:each="type : ${types}">
+												<option  th:value="${type.id}" th:text="${type.name}"></option>
+											</div>
+										</select>
+									</div>
+								</div>
+							</div>
+							<label>为博客添加标签:</label>
+							<div class="form-inline well">
+								<div th:each="tag : ${tags}" id="tag-div" th:attr="data-value=*{tagIds}">
+									<label class="checkbox-inline">
+										<input type="checkbox" name="tagIds" th:value="${tag.id}"> [[${tag.name}]]
+									</label>
+								</div>
+							</div>
+							<label>博客可开启的功能：</label>
+							<div class="form-group well">
+								<label class="checkbox-inline">
+									<input type="checkbox" name="recommend"  th:checked="*{recommend}">可以推荐
+								</label>
+								<label class="checkbox-inline">
+									<input type="checkbox" name="shareStatement"th:checked="*{shareStatement}">转载需要声明
+								</label>
+								<label class="checkbox-inline">
+									<input type="checkbox" name="appreciation" th:checked="*{appreciation}">可以赞赏
+								</label>
+								<label class="checkbox-inline">
+									<input type="checkbox" name="commentable" th:checked="*{commentable}">可以评论
+								</label>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button id="save-btn" class="btn btn-info" type="button">保存为草稿</button>
+							<button id="submit-btn" class="btn btn-primary" type="button">发布文章</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<!-- 提示框-->
+		<div id="tip-modal"  class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog"  style="padding-top: 200px; z-index: 10002 !important;">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">提示</h4>
+					</div>
+					<div class="modal-body">
+						<p>内容或标题不能为空</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 底部 -->
+<footer th:replace ="admin/_fragments :: footer" class="footer navbar-default navbar-static-bottom" >
+	<div class="container-fluid" style="background-color: #3C763D;height: 200px;">
+		<div class="row" style="height: 60%">
+			<div class="col-md-3"><img src="../../static/img/QR-code.jpg"  th:src="@{/img/QR-code.jpg}" class="img-rounded" height="80px" width="80px"></div>
+			<div class="col-md-3" id="footer-freshBlogs-container">
+				<div th:fragment="footer-fresh-div" >
+					<strong>最新博客</strong>
+					<div th:each="blog : ${blogs}">
+						<a href="#" style="color: #0C1021" th:href="@{/blog/{id}(id=${blog.id})}" th:text="${blog.title}">Dapibus ac facilisis in</a>
+					</div>
+					<!--/*-->
+					<div>
+						<a href="#">Morbi leo risus</a>
+					</div>
+					<div>
+						<a href="#">Vestibulum at eros</a>
+					</div>
+					<!--*/-->
+				</div>
+			</div>
+			<div class="col-md-3">
+				<address>
+					<strong>联系我</strong><br>
+					<p>
+						邮箱: <span th:text="#{footer.email}">121@136.com</span><br>
+						QQ: <span th:text="#{footer.qq}">666666666</span><br>
+						QQ群: <span th:text="#{footer.qqGroup}">666666666</span>
+					</p>
+				</address>
+			</div>
+			<div class="col-md-3">
+				<strong>SJZD</strong><br>
+				<p th:text="#{footer.introduce}">一个简易的博客</p>
+			</div>
+		</div>
+		<div class="text-center" style="border-top: black 1px solid; width: 100%;">
+			<div style="margin-top: 20px">
+				<strong>Copyright &copy; 2019 - 2050 SJZD designed at CQUT</strong>
+			</div>
+		</div>
+	</div>
+</footer>
+<!--/*/<th:block th:replace="admin/_fragments :: script">/*/-->
+<script type="text/javascript" src="../../static/jquery/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="../../static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../static/lib/editormd/editormd.min.js"></script>
+<!--/*/</th:block>/*/-->
+<script>
+	//初始化Markdown编辑器
+	$(function() {
+		var contentEditor = editormd("editor", {
+			width  : "100%",
+			height : 800,
+			// path : "../../static/lib//editormd/lib/"
+			path : "/lib/editormd/lib/"
+		});
+		//默认选中上次选的标签
+		var tags = $("[name='tagIds']");
+		var already = "" + $("#tag-div").data("value");
+		if (already != null || already != "") {
+			$.each(tags,function (index, obj) {
+				$(obj).prop('checked', already.indexOf(obj.value) > -1);
+			});
+		}
+
+		// 默认选中上次选的分类
+		var typeId = $("#type-select").data("value");
+		$("#type-select option[value="+ typeId + "]").attr('selected','selected');
+	});
+
+	// 打开提交表单模态框事件
+	$("#open-submit-modal-btn").click(function() {
+		$("[name='title']").val($("[name='title0']").val());
+		$("[name='content']").val($("[name='content0']").val());
+		$("#summit-modal").modal();
+	});
+
+	//保存按钮事件
+	$("#save-btn").click(function() {
+		$("[name='published']").val(false);
+		if (check()) {
+
+		}
+		$("#blog-form").submit();
+	});
+
+	// 提交按钮事件
+	$("#submit-btn").click(function () {
+		$("[name='published']").val(true);
+		if (check()) {
+			$("#tip-modal").modal();
+		}
+		$("#blog-form").submit();
+	});
+
+	// 标签选择校验
+	function check() {
+		var title = $("[name='title']").val();
+		var content = $("[name='content']").val();
+		if (title == "" || title == null
+				|| content == "" || content == null) {
+			return false;
+		}
+		return true;
+	};
+</script>
+</body>
+</html>

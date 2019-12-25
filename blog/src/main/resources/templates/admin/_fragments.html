@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:replace="${title}">博客</title>
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="../../static/lib/editormd/css/editormd.min.css" th:href="@{/lib/editormd/css/editormd.min.css}"/>
+    <style>
+        /* footer元素设置 */
+        footer div .row {
+            margin-bottom: 0.625rem;
+            height: 6.25rem;
+        }
+        footer div .row [class*="col-md-3"] {
+            height: 100px;
+            margin-top: 1.875rem;
+            text-align: center;
+            border-right: 1px solid #122B40;
+        }
+    </style>
+</head>
+<body>
+    <!--导航栏部分-->
+    <div th:fragment="nav" >
+        <!--导航栏-->
+        <nav class="navbar navbar-inverse navbar-static-top" role="navagation">
+            <div class="container">
+                <!-- logo -->
+                <div class="navbar-header">
+                    <a href="#" class="navbar-brand">管理后台</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li ><a href="#" th:href="@{/admin/blogs}"><i class="glyphicon glyphicon-home"></i>&nbsp;博客</a></li>
+                        <li ><a href="#" th:href="@{/admin/types}"><i class="glyphicon glyphicon-th"></i>&nbsp;分类</a></li>
+                        <li ><a href="#" th:href="@{/admin/tags}"><i class="glyphicon glyphicon-tags"></i>&nbsp;标签</a></li>
+                    </ul>
+
+                    <!-- 用户已登录      ↓ -->
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#" th:href="@{/admin/blogs/input}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;写博客</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <!-- 用户头像      ↓ -->
+                                <img style="height:30px;width:30px" th:src= "${session.user.avatar} == null ? @{/img/default.jpg} : @{'../' + ${session.user.avatar}}"  class="img-circle" />
+                                <!-- 用户头像      ↑ -->
+                                <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="javascript:showUploadAvatarModal()" th:href="@{javascript:showUploadAvatarModal();}">头像修改</a></li>
+                                <li><a href="#" th:href="@{/admin/logout}">退出登录</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- 头像修改模态框 -->
+        <div id="uploadAvatarModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">更换头像(仅支持jpeg，jpg，png)</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="container" action="/admin/upload" enctype="multipart/form-data" method="post">
+                            <div style="border: #0C1021 solid 1px;height: 100px; width: 100px">
+                                <img id="uploadImg" class="img-circle" style="height: 100px; width: 100px;">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <input type="file" name="file">
+                                </div>
+                                <!-- 保存用户自定义的原始图头像 -->
+                                <div class="col-md-2">
+                                    <label>现用头像:</label>
+                                    <img style="height: 50px;width: 50px;" class="img img-circle" src="../../static/img/default.jpg" th:src="@{'../' + ${session.user.avatar}}"/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button id="icon-submit-btn" type="button" class="btn btn-primary">提交</button>
+                    </div>
+                </div>
+            </div>>
+        </div>
+    </div>
+
+    <!--底部部分-->
+    <footer th:fragment="footer" style="margin-top: 500px" class="footer navbar-default navbar-static-bottom" >
+        <div class="container-fluid" style="background-color: #3C763D;height: 200px;">
+            <div class="row" style="height: 60%">
+                <div class="col-md-3"><img src="../../static/img/QR-code.jpg"  th:src="@{/img/QR-code.jpg}" class="img-rounded" height="80px" width="80px"></div>
+                <div class="col-md-3" id="footer-freshBlogs-container">
+                    <div th:fragment="footer-fresh-div" >
+                        <strong>最新博客</strong>
+                        <div th:each="blog : ${blogs}">
+                            <a href="#" style="color: #0C1021" th:href="@{/blog/{id}(id=${blog.id})}" th:text="${blog.title}">Dapibus ac facilisis in</a>
+                        </div>
+                        <!--/*-->
+                        <div>
+                            <a href="#">Morbi leo risus</a>
+                        </div>
+                        <div>
+                            <a href="#">Vestibulum at eros</a>
+                        </div>
+                        <!--*/-->
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <address>
+                        <strong>联系我</strong><br>
+                        <p>
+                            邮箱: <span th:text="#{footer.email}">121@136.com</span><br>
+                            QQ: <span th:text="#{footer.qq}">666666666</span><br>
+                            QQ群: <span th:text="#{footer.qqGroup}">666666666</span>
+                        </p>
+                    </address>
+                </div>
+                <div class="col-md-3">
+                    <strong>SJZD</strong><br>
+                    <p th:text="#{footer.introduce}">一个简易的博客</p>
+                </div>
+            </div>
+            <div class="text-center" style="border-top: black 1px solid; width: 100%;">
+                <div style="margin-top: 20px">
+                    <strong>Copyright &copy; 2019 - 2050 SJZD designed at CQUT</strong>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!--js部分-->
+    <th:block th:fragment="script">
+        <script type="text/javascript" src="../../static/jquery/jquery-3.4.1.min.js" th:src="@{/jquery/jquery-3.4.1.min.js}"></script>
+        <script type="text/javascript" src="../../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+        <script type="text/javascript" src="../../static/lib/editormd/editormd.min.js" th:src="@{/lib/editormd/editormd.min.js}"></script>
+        <script>
+            $(function() {
+                $("#footer-freshBlogs-container").load(/*[[@{/footer/fresh}]]*/"/footer/fresh");
+            });
+
+            function showUploadAvatarModal() {
+                $('#uploadAvatarModal').modal('show');
+            };
+
+            $("[name='file']").on('change',function () {
+                var filePath = $(this).val();         //获取到input的value，里面是文件的路径
+                if (!filePath.substring(filePath.lastIndexOf("."))
+                    .toLowerCase().match("/.png|.jpg|.jpeg/")){
+                    alert("上传错误,文件格式必须为：png/jpg/jpeg");
+                    return;
+                }
+                // 获取上传文件对象
+                var file = $(this)[0].files[0];
+                // 读取文件URL
+                var reader = new FileReader();
+                reader.readAsDataURL(file);
+                // 阅读文件完成后触发的事件
+                reader.onload = function () {
+                    // 读取的URL结果：this.result
+                    $("#uploadImg").attr("src", this.result);// img标签的ID
+                }
+            });
+
+            $("#icon-submit-btn").click(function () {
+                var formData = new FormData();
+                var file = $("[name='file']")[0].files[0];
+                if (null == file) {
+                    alert("上传文件不能为空");
+                    return;
+                }
+                formData.append("file", file);
+                $.ajax({
+                    url: "/admin/upload",
+                    type: 'POST',
+                    cache: false,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        alert(data)
+                        window.location.reload();
+                    }
+                });
+            });
+        </script>
+    </th:block>
+</body>
+</html>

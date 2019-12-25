@@ -1,0 +1,10 @@
+spring:
+  thymeleaf:
+    cache: false
+    mode: HTML
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,file:/f:/upload/
+  profiles:
+    active: dev
+  messages:
+    basename: i18n/messages_zh_CN

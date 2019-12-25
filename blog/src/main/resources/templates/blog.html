@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+	<head th:replace="_fragments :: head(~{::title})">
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>博客页面</title>
+		<link rel="stylesheet" href="../static/css/bootstrap.min.css"/>
+		<style>
+			/* footer元素设置 */
+			footer div .row {
+				margin-bottom: 0.625rem;
+				height: 6.25rem;
+			}
+			footer div .row [class*="col-md-3"] {
+				height: 100px;
+				margin-top: 1.875rem;
+				text-align: center;
+				border-right: 1px solid #122B40;
+			}
+		</style>
+	</head>
+	<body>
+		<!--导航栏-->
+		<nav th:replace="_fragments :: nav" class="navbar navbar-inverse navbar-static-top" role="navagation">
+		  <div class="container">
+			<!-- logo -->
+			<div class="navbar-header">
+			  <a href="#" class="navbar-brand">SJZD</a>
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li ><a href="#"><i class="glyphicon glyphicon-home"></i>&nbsp;首页</a></li>
+					<li ><a href="#"><i class="glyphicon glyphicon-th"></i>&nbsp;分类</a></li>
+					<li ><a href="#"><i class="glyphicon glyphicon-tags"></i>&nbsp;标签</a></li>
+					<li ><a href="#"><i class="glyphicon glyphicon-book"></i>&nbsp;归档</a></li>
+					<li ><a href="#"><i class="glyphicon glyphicon-user"></i>&nbsp;关于我</a></li>
+				</ul>
+				<form class="navbar-form navbar-right" role="search" target="_blank" method="post" action="#">
+					<div class="input-group">
+						<input type="text" class="form-control" placeholder="Search" name="query">
+						<span class="input-group-btn">
+							<button type="submit" class="btn btn-default">
+								<span class="glyphicon glyphicon-search" aria-hidden="true"></span>搜索
+							</button>
+						</span>
+					</div>
+				</form>
+			</div>
+		  </div>
+		</nav> <!-- 导航栏结束 -->
+		
+		<!-- 中间内容 -->
+		<div style="padding-top: 3.125rem; padding-bottom: 12.5rem;">
+			<div class="container" style="padding-top: 3.125rem; padding-bottom: 12.5rem;">
+				<div class="row">
+					<!-- 主内容区 -->
+					<div class="col-md-9" role="main">
+						<!-- 头像 作者 创建日期 浏览量-->
+						<div style="margin-bottom: 0px">
+							<img src="../static/img/QR-code.jpg"  th:src="@{${blog.author.avatar}}" height="20px" width="20px" class="img-circle"/>
+							<span href="#" th:text="${blog.author.nickName}">作者</span>
+							<i class="glyphicon glyphicon-calendar"></i>&nbsp;<span th:text="${blog.updateTime}">2019-12-01</span>
+							<i class="glyphicon glyphicon-eye-open"></i>&nbsp;<span th:text="${blog.views}">浏览次数</span>
+						</div>
+						<!-- 图片和标题区 -->
+						<div style="width: 100%;">
+							<img src="../static/img/blog.png" th:src="@{${blog.firstPicture}}" style="width: 100%;height: auto;" class="center-block">
+							<div class="text-right" style="margin-top: 30px">
+								<a class="btn btn-info" th:text="${blog.flag}">原创</a>
+							</div>
+							<div class="text-center">
+								<h2 th:text="${blog.title}">java学习方法</h2>
+							</div>
+						</div>
+						<!-- 内容区 -->
+						<div style="margin-top: 40px">
+							<p th:utext="${blog.content}">
+								已经步入大二，好像身边的人都开始莫名其妙的努力:考证的在马不停蹄的考证；做兼职赚钱的在不断寻找兼职；谈恋爱的热火朝天；努力学习的图书馆自习室永远有他们的身影；忙社团忙组织的一直在各种大会小会之间穿梭……
+								
+								而我却在大家热火朝天的时候，开始寻找大学的意义？
+								
+								大一时，刚逃脱高中军事化管理的牢笼，我肆意妄为了一把，每天逃课，窝在宿舍追剧、看小说、写小说，考试前，临时抱佛脚，也能考个七八十。我自己甚至为此沾沾自喜……
+								
+								大二开始，被迫每天马不停蹄的穿梭于各个教室听课，不敢逃课，去了不听又觉得对不起自己起的那么早，跑的这么远的路，每堂课都在听，却不知道自己在听什么？不知道，自己学了这些课，对未来的作用是什么？却又不敢，什么都不在乎，啥都不学！
+								
+								我甚至觉得自己上了一个假大学，周围的一切都不真实，急冲冲的生活，看不到的结果和未来……
+								
+								有人说，重在过程，可我觉得，如果我们连结果都不知道是啥，那我们的过程有什么用呢？
+								
+								个人而言，我感觉绝大部分的大学生都不你最好知道自己将来具体要干什么，大部分人都是在跟风，看着周围的人干啥，自己就跟上，生怕自己被别人越甩越远……其实，这是一种浪费时间！
+								
+								大学，主要是学习技能，你不可能永远优秀，不可能什么都学会，所以，学习一种技能才是你最应该做的。比如写作、英语、演讲、与人相处等等。
+								
+								无数人因为写作而出名，实现人生的价值，至少在你离开人世时，你有一本书，一篇文章留给世人，若干年后，被一个人无意翻起，引起共鸣，那就是你的意义……
+								
+								学会英语，你可以有更多的机会，有更多的选择，可以去想去的国度……
+								
+								都说，会演讲的人，成功的几率比别人大，比如毛泽东、马云，说话是你接触这个世界上的方式，演讲具有一定的渲染性，使你更容易被人信服……
+								
+								大学是个小型社会，这句话真的是没有错，你会遇见各种各样的人，有温暖舒服的人，也有各种奇葩的人。
+								
+								遇到不同的人，你会形成不同的对待态度和方法，使自己明哲保身，不至于被别人泼墨。
+								
+								据统计，人的一生会遇见将近几亿人，或是擦肩而过，或是有很深的接触，大学里，不过才是几千几万人，如果，在这几千几万人当中，你都不能学会更好的生存，那你如何步入社会？
+								
+								大学的意义，大约是给了你选择的权利，选择以后有怎样的生活，怎样的人生；
+								
+								大学的意义，大约是让你碰见一些人，碰见一些事，给未来的你积累经验；
+								
+								大学的意义，大约是给你一个分水岭，区别开一些人。
+							</p>
+						</div>
+
+						<!--标签-->
+						<div class="text-right">
+							<span th:each="tag : ${blog.tags}" class="label label-primary" th:text="${tag.name}">标签</span>
+						</div>
+
+						<!-- 赞赏区 -->
+						<div style="margin-top: 100px" th:if="${blog.appreciation}">
+							<div class="text-center">
+								<p>"还没有人赞赏，支持一下"</p>
+								<a id="weixinPay" tabindex="0" class="btn btn-success" role="button" data-toggle="popover"
+								data-trigger="focus" data-container="body" data-placement="bottom" title="微信支付"
+								data-content='<img src="../img/QR-code.jpg" class="img-rounded"
+								height="80px" width="80px">' >赞赏一下</a>
+							</div>
+						</div>
+
+						<!--博客转载声明信息-->
+						<div class="well"  style="margin-top: 80px" th:if="${blog.shareStatement}">
+							<div class="row">
+								<div class="col-md-8">
+									<ui class="list">
+										<li>作者：<span th:text="${blog.author.nickName}">xxx</span><a href="#" th:href="@{/about}" target="_blank">（联系作者）</a></li>
+										<li>发表时间：<span th:text="${blog.updateTime}">2017-10-02</span></li>
+										<li>版权声明：自由转载-非商用-非衍生-保持署名（创意共享3.0许可证）</li>
+										<li>公众号转载：请在文末添加作者公众号二维码</li>
+									</ui>
+								</div>
+								<div class="col-md-4 text-right">
+									<img src="../static/img/QR-code.jpg" th:src="@{/img/QR-code.jpg}" class="img-rounded" style="width: 80px">
+								</div>
+							</div>
+						</div>
+
+						<!-- 评论区 -->
+						<div style="margin-top: 80px;" th:if="${blog.commentable}">
+							<label style="font-size: x-large">评论</label>
+							<!-- 评论展示区 -->
+							<div id="comment-container" class="well">
+								<div th:fragment="commentList">
+									<div th:each="comment : ${comments}">
+										<a>
+											<img src="https://unsplash.it/100/100?image=1005" th:src="@{${comment.avatar}}" style="height: 3.25rem;width: 3.25rem;">
+										</a>
+										<a>
+											<span style="color: teal;font-weight: bold" th:text="${comment.nickName}">Matt</span>&nbsp;<span class="label label-danger" th:if="${comment.isAdminComment}">博主</span>
+										</a>&nbsp;<span th:text="${comment.createTime}">Today at 5:42PM</span>
+										<a onclick="reply(this)" data-commentid="1" data-commentnickname="张三"  th:attr="data-commentid=${comment.id},data-commentnickname=${comment.nickName}">回复</a>
+										<p style="margin-top: 10px; margin-left: 80px" th:text="${comment.content}">
+											How artistic!
+										</p>
+										<!-- 回复列表 -->
+										<div th:if="${#lists.size(comment.replyComments)}">
+											<div style="margin-left: 80px" th:each="childComment : ${comment.replyComments}">
+												<a>
+													<img src="https://unsplash.it/100/100?image=1005" th:src="@{${childComment.avatar}}" style="height: 3.25rem;width: 3.25rem;">
+												</a>
+												<a>
+													<span style="color: teal;font-weight: bold" th:text="${childComment.nickName}">Matt</span>&nbsp;<span class="label label-danger" th:if="${childComment.isAdminComment}">博主</span>
+												</a><span style="color: #0000C0;font-weight: bold" th:text="'@' + ${childComment.parentComment.nickName}">@xxx</span><span th:text="${childComment.createTime}">Today at 5:42PM</span>
+												<a onclick="reply(this)" th:attr="data-commentid=${childComment.id},data-commentnickname=${childComment.nickName}">回复</a>
+												<p style="margin-top: 10px; margin-left: 80px" th:text="${childComment.content}">
+													How artistic!
+												</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- 评论输入区 -->
+							<div style="margin-top: 20px;" id="comment-form-div">
+								<form id="comment-form" action="#" method="post">
+									<input type="hidden" name="blogId" th:value="${blog.id}">
+									<input type="hidden" name="pid" value="-1">
+									<div class="form-group">
+										<!-- 这里两个<textarea></textarea>之间不能有空格和回车换行-->
+										<textarea class="form-control" name="content" rows="6" placeholder="请提出你的建议..."></textarea>
+									</div>
+									<div class="form-inline text-right">
+										<div class="form-group">
+											<label for="exampleInputName2">姓名：</label>
+											<input type="text" class="form-control" id="exampleInputName2" name="nickName"
+												   th:value="${session.user} == null ? '' : ${session.user.nickName}"
+												   placeholder="张三">
+										</div>
+										<div class="form-group">
+											<label for="exampleInputEmail2">邮箱：</label>
+											<input type="eamil" class="form-control" id="exampleInputEmail2" name="email"
+												   th:value="${session.user} == null ? '' : ${session.user.email}"
+												   placeholder="jane.doe@example.com">
+										</div>
+										<button id="comment-submit-btn" type="button" class="btn btn-primary">发表评论</button>
+									</div>
+								</form>
+							</div><!-- 评论输入区 -->
+						</div> <!-- 评论展示区-->
+					</div> <!-- 主内容区结束-->
+
+					<!-- 侧导航栏 -->
+					<div class="col-md-offset-11" role="complementary">
+						<div class="text-right" style="margin-top: 200px; width: 80px">
+							<nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" style="z-index: 2;">
+								<ul class="nav bs-docs-sidenav">
+									<li>
+										<img src="../static/img/weixin.jpg" th:src="@{/img/weixin.jpg}" alt="联系我" class="img-rounded" style="width: 40px; height: 40px"
+											 data-toggle="tooltip" data-html="true" data-placement="left"
+											 title="<img src='../img/QR-code.jpg' class='img-rounded'
+											height='80px' width='80px'>">
+									</li>
+									<li class="divider" role="separator">
+									</li>
+									<li>
+										<a id="reply-btn" type="button" class="btn btn-sm" data-toggle="tooltip"
+										   data-placement="right" title="留言">
+											<i class="glyphicon glyphicon-comment"></i>
+										</a>
+									</li>
+									<li>
+										<a id="top-btn" type="button" class="btn btn-sm" data-toggle="tooltip"
+										   data-placement="right" title="返回顶部">
+											<i class="glyphicon glyphicon-chevron-up"></i>
+										</a>
+									</li>
+								</ul>
+							</nav>
+						</div>
+					</div><!-- 侧导航栏结束  -->
+				</div><!-- 栅栏结束 -->
+			</div><!--container-->
+		</div> <!-- 中间内容结束-->
+
+	<!-- 底部 -->
+		<footer th:replace="_fragments :: footer" class="footer navbar-default navbar-static-bottom" >
+			<div class="container-fluid" style="background-color: #3C763D;height: 200px;">
+				<div class="row" style="height: 60%">
+					<div class="col-md-3"><img src="../static/img/QR-code.jpg"  th:src="@{/img/QR-code.jpg}" class="img-rounded" height="80px" width="80px"></div>
+					<div class="col-md-3" id="footer-freshBlogs-container">
+						<div th:fragment="footer-fresh-div" >
+							<strong>最新博客</strong>
+							<div th:each="blog : ${blogs}">
+								<a href="#" style="color: #0C1021" th:href="@{/blog/{id}(id=${blog.id})}" th:text="${blog.title}">Dapibus ac facilisis in</a>
+							</div>
+							<!--/*-->
+							<div>
+								<a href="#">Morbi leo risus</a>
+							</div>
+							<div>
+								<a href="#">Vestibulum at eros</a>
+							</div>
+							<!--*/-->
+						</div>
+					</div>
+					<div class="col-md-3">
+						<address>
+							<strong>联系我</strong><br>
+							<p>
+								邮箱: <span th:text="#{footer.email}">121@136.com</span><br>
+								QQ: <span th:text="#{footer.qq}">666666666</span><br>
+								QQ群: <span th:text="#{footer.qqGroup}">666666666</span>
+							</p>
+						</address>
+					</div>
+					<div class="col-md-3">
+						<strong>SJZD</strong><br>
+						<p th:text="#{footer.introduce}">一个简易的博客</p>
+					</div>
+				</div>
+				<div class="text-center" style="border-top: black 1px solid; width: 100%;">
+					<div style="margin-top: 20px">
+						<strong>Copyright &copy; 2019 - 2050 SJZD designed at CQUT</strong>
+					</div>
+				</div>
+			</div>
+		</footer>
+		<!--/*/<th:block th:replace="_fragments :: script">/*/-->
+		<script type="text/javascript" src="../static/jquery/jquery-3.4.1.min.js"></script>
+		<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+		<!--/*/</th:block>/*/-->
+		<script type="text/javascript" src="../static/lib/bootstrapValidator/js/bootstrapValidator.min.js"
+		        						th:src="@{/lib/bootstrapValidator/js/bootstrapValidator.min.js}"></script>
+		<script src="//cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
+		<script>
+			/* 弹出付款码 */
+			$('#weixinPay').popover({
+				  trigger: 'focus', // 这个是定义鼠标事件，等于data-trigger="focus"
+				  html: true
+			 });
+
+			<!-- 需要初始化的内容 -->
+			$(function () {
+				/*侧航栏提示状态框初始化*/
+				$('[data-toggle="tooltip"]').tooltip();
+
+				/*评论展示区初始化*/
+				var url="/comments/" +  $("[name='blogId']").val();
+				$("#comment-container").load(/*[[@{/comments/{id}(id=${blog.id})}]]*/url);
+
+				/*评论表单验证的初始化*/
+				$("#comment-form").bootstrapValidator({
+					fields :{
+						content: {
+							validators: {
+								notEmpty: {
+									message: "评论信息不能为空"
+								}
+							}
+						},
+						nickName: {
+							validators: {
+								notEmpty: {
+									message: "请输入你的尊姓大名"
+								},
+								stringLength: {
+									min: 2,
+									max: 10,
+									message: "姓名必须在2-10位之间"
+								}
+							}
+						},
+						email: {
+							validators: {
+								notEmpty: {
+									message: "请输入你的邮箱地址"
+								},
+								emailAddress: {
+									regexp:/^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/,
+									message: '邮箱格式不正确'
+								}
+							}
+						}
+					}
+				});
+			});
+
+			/* 返回顶部 */
+			$('#top-btn').click(function () {
+				$(window).scrollTo(0,0);
+			});
+
+			/*留言按钮*/
+			$('#reply-btn').click(function () {
+				$("[name='content']").focus();
+				$(window).scrollTo($("#comment-form-div"),400);
+			})
+
+			  /* 回复评论输入模态框 */
+			function reply(obj) {
+				var commentid = $(obj).data("commentid");
+				var commentnickname = $(obj).data("commentnickname");
+				$("[name='pid']").val(commentid);
+				$("[name='content']").attr("placeholder", "@"+commentnickname).focus();
+				$(window).scrollTo($("#comment-form-div"),400);
+			};
+
+			/* 提交评论以及动态更新 */
+			$("#comment-submit-btn").click(function () {
+				/* 表单验证 */
+				var flag = $('#comment-form').data("bootstrapValidator").validate();
+				if(flag){
+					$("#comment-container").load(/*[[@{/comments/add}]]*/"/comments/add", {
+						"blogId" : $("[name='blogId']").val(),
+						"pid" : $("[name='pid']").val(),
+						"nickName" : $("[name='nickName']").val(),
+						"email" : $("[name='email']").val(),
+						"content" : $("[name='content']").val()
+					}, function () {
+						clearComment();
+						$(window).scrollTo(0,0);
+					});
+				};
+			});
+
+			/* 清空表单输入信息 */
+			function clearComment() {
+				$("[name='content']").val("");
+				$("[name='pid']").val(-1);
+				$("[name='nickName']").val("");
+				$("[name='email']").val("");
+				$("[name='content']").attr("placeholder","请提出你的建议...");
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>登录页面</title>
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}"/>
+    <style>
+        form{
+            width: 300px;
+            text-align: center;
+            margin-left: 450px;
+            margin-top: 220px;
+        }
+        .form-control, button{
+            width: 300px;
+            height: 40px;
+        }
+    </style>
+</head>
+<body style="background-color: #00aaaa" >
+    <div class="container">
+        <form id="loginForm" class="form-signing" method="post" th:action="@{/admin/login}">
+            <p style="color : #9FEE00;" th:if="${message} != null">[[${message}]]</p>
+            <h2 class="form-signing-heading">请登录</h2>
+            <div>
+                <label for="username" class="sr-only">用户名</label>
+                <input id="username" name="username" class="form-control" placeholder="用户名" required autofocus>
+            </div>
+            <div>
+                <label for="password" class="sr-only">密码</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="密码" required>
+            </div>
+            <br>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+            <p class="mt-5 mb-3 text-muted">&copy; 2019-2020</p>
+        </form>
+    </div> <!-- /container -->
+
+    <!--/*/<th:block th:replace="admin/_fragments :: script">/*/-->
+    <script type="text/javascript" src="../static/jquery/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+    <!--/*/</th:block>/*/-->
+</body>
+</html>

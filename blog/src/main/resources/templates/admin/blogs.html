@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+	<head th:replace="admin/_fragments :: head(~{::title})">
+	    <meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	    <title>博客列表</title>
+		<link rel="stylesheet" href="../../static/css/bootstrap.min.css" />
+		<style>
+			/* footer元素设置 */
+			footer div .row {
+				margin-bottom: 0.625rem;
+				height: 6.25rem;
+			}
+			footer div .row [class*="col-md-3"] {
+				height: 100px;
+				margin-top: 1.875rem;
+				text-align: center;
+				border-right: 1px solid #122B40;
+			}
+		</style>
+	</head>
+	<body>
+	<!--导航栏-->
+	<div  th:replace="admin/_fragments :: nav">
+		<nav class="navbar navbar-inverse navbar-static-top" role="navagation">
+			<div class="container">
+				<!-- logo -->
+				<div class="navbar-header">
+					<a href="#" class="navbar-brand">管理后台</a>
+				</div>
+				<div id="navbar" class="collapse navbar-collapse">
+					<ul class="nav navbar-nav">
+						<li ><a href="#"><i class="glyphicon glyphicon-home"></i>&nbsp;博客</a></li>
+						<li ><a href="#"><i class="glyphicon glyphicon-th"></i>&nbsp;分类</a></li>
+						<li ><a href="#"><i class="glyphicon glyphicon-tags"></i>&nbsp;标签</a></li>
+					</ul>
+
+					<!-- 用户已登录      ↓ -->
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+								<!-- 用户头像      ↓ -->
+								<img id="iconImg" style="height:30px;width:30px" src= "../../static/img/default.jpg" class="img-circle"/>
+								<!-- 用户头像      ↑ -->
+								<span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a>头像修改</a></li>
+								<li><a href="/static/img/admin/logout">退出登录</a></li>
+							</ul>
+						</li>
+					</ul>
+					<!-- 用户登录状态       ↑ -->
+				</div>
+			</div>
+		</nav>
+	</div>
+
+	<!-- 中间内容-->
+	<div style="margin-top: 3.125rem;">
+		<div class="container">
+			<!--操作结果信息展示区-->
+			<div th:if="${message} != null" class="alert alert-info alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h2>提示：</h2>
+				<p style="font-size: 20px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[[${message}]]</p>
+			</div>
+
+			<!-- 搜索部分 -->
+			<div class="well">
+				<div class="navbar-form">
+					<input type="hidden" name="currentPage">
+					<div class="form-group">
+						<input type="text" class="form-control" name="title" placeholder="标题">
+					</div>
+					<div class="form-group">
+						<select class="form-control" name="typeId">
+							<option value="">分类</option>
+							<div th:each="type : ${types}" >
+								<option  th:value="${type.id}" th:text="${type.name}"></option>
+							</div>
+						</select>
+					</div>
+					<div class="checkbox">
+						<label>
+						  <input type="checkbox" name="recommend">推荐
+						</label>
+					</div>
+					<button type="button" class="btn btn-warning" onclick="reset()">清空</button>
+					<button type="button" class="btn btn-success" onclick="submit()">搜索</button>
+				</div>
+			</div>
+
+			<!-- 搜索结果 -->
+			<div id="tableContainer" class="panel panel-default">
+				<table th:fragment="blogTable" class="table table-hover" style="border: solid #337AB7 0.0625rem;">
+					<thead>
+						<tr>
+							<th></th>
+							<th>标题</th>
+							<th>分类</th>
+							<th>状态</th>
+							<th>推荐</th>
+							<th>更新日期</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="blog, iterState : ${blogPage.records}">
+							<td th:text="${iterState.count}">1</td>
+							<td th:text="${blog.title}">康成武</td>
+							<td th:text="${blog.type.name}">java</td>
+							<td th:text="${blog.published} ? '已发布' : '草稿'">已发布</td>
+							<td th:text="${blog.recommend} ? '是' : '否'">是</td>
+							<td th:text="${blog.updateTime}">2019-12-5</td>
+							<td>
+								<div class="btn-group">
+									<a th:href="@{/admin/blogs/delete/(id=${blog.id})}" class="btn btn-danger">删除</a>
+									<a th:href="@{/admin/blogs/{id}/edit(id=${blog.id})}" class=" btn btn-primary">编辑</a>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th colspan="6">
+								<div>
+									<input type="hidden" id="pageInfo" th:attr="data-total= ${blogPage.total}, data-size=${blogPage.size}">
+									<button type="button" class="btn btn-default" th:attr="data-page=${blogPage.current}-1" onclick="nextPage(this)" >上一页</button>
+									<button type="button" class="btn btn-default" th:attr="data-page=${blogPage.current}+1" onclick="nextPage(this)">下一页</button>
+								</div>
+							</th>
+							<th>
+								<div class="text-right">
+									<a href="#"  class="btn btn-success" th:href="@{/admin/blogs/input}">新增</a>
+								</div>
+							</th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+	</div>
+	<!-- 底部 -->
+	<footer th:replace="admin/_fragments :: footer" class="footer navbar-default navbar-static-bottom" >
+		<div class="container-fluid" style="background-color: #3C763D;height: 200px;">
+			<div class="row" style="height: 60%">
+				<div class="col-md-3"><img src="../../static/img/QR-code.jpg"  th:src="@{/img/QR-code.jpg}" class="img-rounded" height="80px" width="80px"></div>
+				<div class="col-md-3" id="footer-freshBlogs-container">
+					<div th:fragment="footer-fresh-div" >
+						<strong>最新博客</strong>
+						<div th:each="blog : ${blogs}">
+							<a href="#" style="color: #0C1021" th:href="@{/blog/{id}(id=${blog.id})}" th:text="${blog.title}">Dapibus ac facilisis in</a>
+						</div>
+						<!--/*-->
+						<div>
+							<a href="#">Morbi leo risus</a>
+						</div>
+						<div>
+							<a href="#">Vestibulum at eros</a>
+						</div>
+						<!--*/-->
+					</div>
+				</div>
+				<div class="col-md-3">
+					<address>
+						<strong>联系我</strong><br>
+						<p>
+							邮箱: <span th:text="#{footer.email}">121@136.com</span><br>
+							QQ: <span th:text="#{footer.qq}">666666666</span><br>
+							QQ群: <span th:text="#{footer.qqGroup}">666666666</span>
+						</p>
+					</address>
+				</div>
+				<div class="col-md-3">
+					<strong>SJZD</strong><br>
+					<p th:text="#{footer.introduce}">一个简易的博客</p>
+				</div>
+			</div>
+			<div class="text-center" style="border-top: black 1px solid; width: 100%;">
+				<div style="margin-top: 20px">
+					<strong>Copyright &copy; 2019 - 2050 SJZD designed at CQUT</strong>
+				</div>
+			</div>
+		</div>
+	</footer>
+	<!--/*/<th:block th:replace="admin/_fragments :: script">/*/-->
+	<script type="text/javascript" src="../static/jquery/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+	<!--/*/</th:block>/*/-->
+	<script>
+		/*分页函数*/
+		function nextPage(obj) {
+			var pageNum = $(obj).data("page");
+			var total = $("#pageInfo").data("total");
+			var size = $("#pageInfo").data("size");
+			if (pageNum == 0 || pageNum > Math.ceil(total/size)){
+				return false;
+			}
+			$("[name='currentPage']").val(pageNum);
+			loadData();
+		}
+
+		/*提交表单数据函数*/
+		function submit() {
+			$("[name='currentPage']").val(1);
+			loadData();
+		}
+
+		/*清空搜索条件*/
+		function reset() {
+			$("[name='title']").val("");
+			$("[name='typeId'] option[value=''] ").attr('selected', true);
+			$("[name='recommend']").prop('checked', false);
+		}
+
+
+		/*刷新表格内容*/
+		function loadData() {
+			$("#tableContainer").load(/*[[@{/admin/blogs/search}]]*/"/admin/blogs/search",{
+				title : $("[name='title']").val(),
+				typeId : $("[name='typeId']").val(),
+				recommend : $("[name='recommend']").prop('checked'),
+				currentPage : $("[name='currentPage']").val()
+			});
+		}
+	</script>
+	
+	</body>
+</html>

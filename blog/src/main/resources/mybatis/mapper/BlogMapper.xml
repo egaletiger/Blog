@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sjzd.mapper.BlogMapper">
+    <resultMap id="blogQuery" type="blog">
+        <id column="bid" property="id"/>
+        <result column="title" property="title"/>
+        <result column="recommend" property="recommend"/>
+        <result column="published" property="published"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="type" javaType="type">
+            <id column="tyid" property="id"/>
+            <result column="tyname" property="name"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="normalBlogSqlMap" type="blog">
+        <id column="bid" property="id"/>
+        <result column="title" property="title"/>
+        <result column="flag" property="flag"/>
+        <result column="first_picture" property="firstPicture"/>
+        <result column="views" property="views"/>
+        <result column="description" property="description"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="author" javaType="user">
+            <result column="nick_name" property="nickName"/>
+            <result column="avatar" property="avatar"/>
+        </association>
+        <association property="type" javaType="type">
+            <result column="tyid" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+
+
+    <resultMap id="baseBlogSqlMap" type="blog">
+        <id column="bid" property="id"/>
+        <result column="title" property="title"/>
+        <result column="flag" property="flag"/>
+        <result column="first_picture" property="firstPicture"/>
+        <result column="views" property="views"/>
+        <result column="description" property="description"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="author" javaType="user">
+            <result column="nick_name" property="nickName"/>
+            <result column="avatar" property="avatar"/>
+        </association>
+        <association property="type" javaType="type">
+            <result column="tyid" property="id"/>
+            <result column="tyname" property="name"/>
+        </association>
+        <collection property="tags" ofType="tag" javaType="java.util.ArrayList">
+            <id column="tid" property="id"></id>
+            <result column="tname" property="name"></result>
+        </collection>
+    </resultMap>
+
+    <resultMap id="superBlogSqlMap" type="blog">
+        <id column="bid" property="id"/>
+        <result column="title" property="title"/>
+        <result column="flag" property="flag"/>
+        <result column="content" property="content"/>
+        <result column="first_picture" property="firstPicture"/>
+        <result column="views" property="views"/>
+        <result column="appreciation" property="appreciation"/>
+        <result column="share_statement" property="shareStatement"/>
+        <result column="commentable" property="commentable"/>
+        <result column="description" property="description"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="author" javaType="user">
+            <result column="nick_name" property="nickName"/>
+            <result column="avatar" property="avatar"/>
+        </association>
+        <association property="type" javaType="type">
+            <result column="tyid" property="id"/>
+            <result column="tyname" property="name"/>
+        </association>
+        <collection property="tags" ofType="tag" javaType="java.util.ArrayList">
+            <id column="tid" property="id"></id>
+            <result column="tname" property="name"></result>
+        </collection>
+    </resultMap>
+
+    <select id="listBlogByBlogQuery" parameterType="com.sjzd.vo.BlogQuery" resultMap="blogQuery">
+        select b.id as bid,
+        b.title,
+        b.recommend,
+        b.published,
+        b.update_time,
+        ty.id as tyid,
+        ty.name as tyname
+        from blog as b, type as ty
+        <where>
+            b.type_id = ty.id
+            <if test="typeId != null">
+                and ty.id = #{typeId}
+            </if>
+            <if test="recommend != null and recommend != ''">
+                and b.recommend = #{recommend}
+            </if>
+            <if test="title != null and title != ''">
+                and b.title like concat('%',#{title},'%')
+            </if>
+        </where>
+        order by b.id asc limit ${(currentPage - 1) * size}, ${size};
+    </select>
+
+    <select id="countListBlogByBlogQuery" parameterType="com.sjzd.vo.BlogQuery" resultType="long">
+        select count(*) from blog as b, type as ty
+        <where>
+            b.type_id = ty.id
+            <if test="typeId != null">
+                and ty.id = #{typeId}
+            </if>
+            <if test="recommend != null and recommend != ''">
+                and b.recommend = #{recommend}
+            </if>
+            <if test="title != null and title != ''">
+                and b.title like concat('%',#{title},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="listBlog" resultMap="normalBlogSqlMap">
+        select
+        <include refid="normalBlogSql">
+            <property name="blogAlias" value="b"/>
+            <property name="userAlias" value="u"/>
+            <property name="typeAlias" value="ty"/>
+        </include>
+        from blog as b, user as u, type as ty
+        where b.user_id = u.id and b.type_id = ty.id and b.published = true
+        order by b.update_time desc
+    </select>
+
+    <select id="listBlogByQuery" resultMap="normalBlogSqlMap">
+        select
+        <include refid="normalBlogSql">
+            <property name="blogAlias" value="b"/>
+            <property name="userAlias" value="u"/>
+            <property name="typeAlias" value="ty"/>
+        </include>
+        from blog as b, user as u, type as ty
+        where b.user_id = u.id and b.type_id = ty.id and b.published = true
+        and b.title like #{query} or b.content like #{query}
+        order by b.update_time desc
+    </select>
+
+    <select id="listBlogByTypeId" resultMap="normalBlogSqlMap">
+        select
+        <include refid="normalBlogSql">
+            <property name="blogAlias" value="b"/>
+            <property name="userAlias" value="u"/>
+            <property name="typeAlias" value="ty"/>
+        </include>
+        from blog as b, user as u, type as ty
+        where b.type_id = #{typeId} and b.type_id = ty.id and b.user_id = u.id and b.published = true
+        order by b.update_time desc
+    </select>
+
+    <select id="findBlogById" resultMap="superBlogSqlMap">
+        select
+        <include refid="superBlogSql">
+            <property name="blogAlias" value="b"/>
+            <property name="userAlias" value="u"/>
+            <property name="typeAlias" value="ty"/>
+            <property name="tagAlias" value="t"/>
+        </include>
+         from blog b
+         left join user u  on b.user_id = u.id
+         left join type ty on b.type_id = ty.id
+         left join blog_tag bt on b.id = bt.blog_id
+         left join tag t on bt.tag_id = t.id
+         where b.id = #{id}
+    </select>
+
+    <select id="listBlogByTagId" resultMap="baseBlogSqlMap">
+        select
+        <include refid="baseBlogSql">
+            <property name="blogAlias" value="b"/>
+            <property name="userAlias" value="u"/>
+            <property name="typeAlias" value="ty"/>
+            <property name="tagAlias" value="t"/>
+        </include>
+         from blog b
+         left join user u on b.user_id = u.id
+         left join type ty on b.type_id = ty.id
+         left join blog_tag bt on bt.blog_id = b.id
+         left join tag t on bt.tag_id = t.id
+         where t.id = #{tagId} and b.published = true
+        order by b.update_time desc
+    </select>
+
+    <!--blog的部分信息-->
+    <sql id="simpleBlogSql">
+        ${blogAlias}.id,
+        ${blogAlias}.title,
+        ${blogAlias}.flag,
+        ${blogAlias}.update_time
+    </sql>
+    <!--blog user type 的部分信息-->
+    <sql id="normalBlogSql">
+        ${blogAlias}.id as bid,
+        ${blogAlias}.title,
+        ${blogAlias}.flag,
+        ${blogAlias}.first_picture,
+        ${blogAlias}.views,
+        ${blogAlias}.description,
+        ${blogAlias}.update_time,
+        ${userAlias}.nick_name,
+        ${userAlias}.avatar,
+        ${typeAlias}.id as tyid,
+        ${typeAlias}.name
+    </sql>
+    <!--blog user type tag的部分信息-->
+    <sql id="baseBlogSql">
+        ${blogAlias}.id as bid,
+        ${blogAlias}.title,
+        ${blogAlias}.flag,
+        ${blogAlias}.first_picture,
+        ${blogAlias}.views,
+        ${blogAlias}.description,
+        ${blogAlias}.update_time,
+        ${userAlias}.nick_name,
+        ${userAlias}.avatar,
+        ${typeAlias}.id as tyid,
+        ${typeAlias}.name as tyname,
+        ${tagAlias}.id as tid,
+        ${tagAlias}.name as tname
+    </sql>
+    <!--blog的基本所有信息 user type tag的部分信息 -->
+    <sql id="superBlogSql">
+        ${blogAlias}.id as bid,
+        ${blogAlias}.title,
+        ${blogAlias}.flag,
+        ${blogAlias}.content,
+        ${blogAlias}.first_picture,
+        ${blogAlias}.views,
+        ${blogAlias}.appreciation,
+        ${blogAlias}.share_statement,
+        ${blogAlias}.commentable,
+        ${blogAlias}.description,
+        ${blogAlias}.update_time,
+        ${userAlias}.nick_name,
+        ${userAlias}.avatar,
+        ${typeAlias}.id as tyid,
+        ${typeAlias}.name as tyname,
+        ${tagAlias}.id as tid,
+        ${tagAlias}.name as tname
+    </sql>
+</mapper>
