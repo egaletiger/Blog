@@ -94,3 +94,5 @@
 [编辑器 Markdown](https://pandao.github.io/editor.md/)
 
 [平滑滚动 jquery.scrollTo](https://github.com/flesler/jquery.scrollTo)
+
+[mybatis-plus](https://mp.baomidou.com)
